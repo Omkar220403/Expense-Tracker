@@ -1,13 +1,29 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Expense {
+  id              String   @id @default(uuid())
+  amount          Float
+  date            DateTime @default(now())
+  categoryId      String
+  paymentMethod   String   // "Cash", "UPI", "Card"
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  category        Category @relation(fields: [categoryId], references: [id])
+}
+
+model Category {
+  id              String   @id @default(uuid())
+  name            String   // e.g., "Food", "Travel", "Bills"
+  color           String?  // Hex color for chart UI
+  budgetLimit     Float?   // Advanced feature: Budget limit per category
+  expenses        Expense[]
 }
