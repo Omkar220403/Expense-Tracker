@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { CalendarIcon, Loader2, Check } from "lucide-react"
 import { format } from "date-fns"
-v
+
 import { cn } from "@/lib/utils"
 import { createExpense } from "@/lib/actions/expenses"
 import { Button } from "@/components/ui/button"
@@ -164,7 +164,7 @@ export function AddExpenseForm({ onSuccess }: { onSuccess?: () => void }) {
                 <FormItem className="flex flex-col space-y-3">
                   <FormLabel>Date</FormLabel>
                   <Popover>
-                    <PopoverTrigger className="w-full relative">
+                    <PopoverTrigger asChild>
                       <FormControl>
                         <Button
                           variant={"outline"}
