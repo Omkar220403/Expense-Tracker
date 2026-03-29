@@ -8,7 +8,7 @@ export default async function Dashboard() {
 
   return (
     <div className="flex flex-col gap-6 p-4 md:p-8 max-w-5xl mx-auto w-full pt-8">
-      <header className="flex flex-row items-center justify-between mb-2">
+      <header className="flex flex-row items-start justify-between mb-2">
         <div>
           <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-br from-foreground to-muted-foreground bg-clip-text text-transparent">
             Overview
@@ -31,8 +31,8 @@ export default async function Dashboard() {
           </div>
           <CardContent className="p-6">
             <p className="text-indigo-100 text-sm font-medium mb-1">Spent This Month</p>
-            <h2 className="text-4xl font-black mb-4">${totalSpentThisMonth.toFixed(2)}</h2>
-            
+            <h2 className="text-4xl font-black mb-4">₹{totalSpentThisMonth.toFixed(2)}</h2>
+
             <div className="flex items-center text-sm font-medium text-indigo-100 bg-white/10 w-fit px-3 py-1 rounded-full backdrop-blur-sm">
               <TrendingUp className="h-4 w-4 mr-1 text-green-300" />
               <span>On track</span>
@@ -50,7 +50,7 @@ export default async function Dashboard() {
                   <ArrowUpRight className="h-4 w-4 text-green-600" />
                 </div>
               </div>
-              <h3 className="text-xl font-bold">$0.00</h3>
+              <h3 className="text-xl font-bold">₹0.00</h3>
             </CardContent>
           </Card>
           <Card className="shadow-none bg-muted/40 border-border/50">
@@ -69,7 +69,7 @@ export default async function Dashboard() {
 
       {/* RECENT TRANSACTIONS */}
       <h3 className="font-bold text-lg mt-4 mb-2">Recent Transactions</h3>
-      
+
       {recentExpenses.length === 0 ? (
         <Card className="bg-muted/30 border-dashed">
           <CardContent className="flex flex-col items-center justify-center py-12 text-center text-muted-foreground">
@@ -103,7 +103,7 @@ export default async function Dashboard() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="font-black text-lg">-${expense.amount.toFixed(2)}</p>
+                  <p className="font-black text-lg">-₹{expense.amount.toFixed(2)}</p>
                 </div>
               </div>
             )

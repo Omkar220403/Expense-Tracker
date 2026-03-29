@@ -1,9 +1,7 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { PrismaClient } from "@prisma/client"
-
-const prisma = new PrismaClient()
+import { prisma } from "@/lib/prisma"
 
 export type ExpenseInput = {
   amount: number

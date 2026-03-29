@@ -9,6 +9,7 @@ import { format } from "date-fns"
 
 import { cn } from "@/lib/utils"
 import { createExpense } from "@/lib/actions/expenses"
+import { getCategories } from "@/lib/actions/categories"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
@@ -18,16 +19,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 import { toast } from "sonner"
 
-// We will fetch real categories later, creating a hardcoded list for instantly usable UI
-const MOCK_CATEGORIES = [
-  { id: "1", name: "Food", icon: "🍔" },
-  { id: "2", name: "Travel", icon: "🚕" },
-  { id: "3", name: "Bills", icon: "🧾" },
-  { id: "4", name: "Shopping", icon: "🛍️" },
-  { id: "5", name: "Entertainment", icon: "🍿" },
-  { id: "6", name: "Health", icon: "💊" },
-  { id: "7", name: "Other", icon: "📦" },
-]
+// Map icons visually using DB names
+const iconMap: Record<string, string> = { "Food": "🍔", "Travel": "🚕", "Bills": "🧾", "Shopping": "🛍️", "Entertainment": "🍿", "Health": "💊", "Other": "📦" }
 
 const formSchema = z.object({
   amount: z.string().nonempty("Amount is required").refine((val) => !isNaN(Number(val)) && Number(val) > 0, "Must be a valid positive number"),
@@ -41,6 +34,15 @@ type ExpenseFormValues = z.infer<typeof formSchema>
 
 export function AddExpenseForm({ onSuccess }: { onSuccess?: () => void }) {
   const [isPending, startTransition] = React.useTransition()
+  const [categories, setCategories] = React.useState<{id: string, name: string}[]>([])
+
+  React.useEffect(() => {
+    async function loadCategories() {
+      const data = await getCategories()
+      setCategories(data)
+    }
+    loadCategories()
+  }, [])
 
   const form = useForm<ExpenseFormValues>({
     resolver: zodResolver(formSchema),
@@ -80,7 +82,7 @@ export function AddExpenseForm({ onSuccess }: { onSuccess?: () => void }) {
           name="amount"
           render={({ field }) => (
             <FormItem className="relative flex flex-col items-center justify-center -mt-6 mb-4">
-              <span className="absolute left-[20%] text-4xl font-bold text-muted-foreground/50 top-6">$</span>
+              <span className="absolute left-[20%] text-4xl font-bold text-muted-foreground/50 top-6">₹</span>
               <FormControl>
                 <Input
                   {...field}
@@ -105,22 +107,28 @@ export function AddExpenseForm({ onSuccess }: { onSuccess?: () => void }) {
               <FormLabel className="text-sm font-medium">Category</FormLabel>
               <FormControl>
                 <div className="grid grid-cols-4 gap-3">
-                  {MOCK_CATEGORIES.map((cat) => (
-                    <button
-                      key={cat.id}
-                      type="button"
-                      onClick={() => field.onChange(cat.id)}
-                      className={cn(
-                        "flex flex-col items-center justify-center p-3 rounded-2xl gap-2 transition-all duration-200 border-2",
-                        field.value === cat.id
-                          ? "border-indigo-500 bg-indigo-500/10 scale-105 shadow-md shadow-indigo-500/10"
-                          : "border-transparent bg-muted/40 hover:bg-muted/60"
-                      )}
-                    >
-                      <span className="text-2xl">{cat.icon}</span>
-                      <span className="text-[10px] font-semibold tracking-wide">{cat.name}</span>
-                    </button>
-                  ))}
+                  {categories.length === 0 ? (
+                    <div className="col-span-4 flex justify-center py-4">
+                      <Loader2 className="h-6 w-6 animate-spin text-muted-foreground/50" />
+                    </div>
+                  ) : (
+                    categories.map((cat) => (
+                      <button
+                        key={cat.id}
+                        type="button"
+                        onClick={() => field.onChange(cat.id)}
+                        className={cn(
+                          "flex flex-col items-center justify-center p-3 rounded-2xl gap-2 transition-all duration-200 border-2",
+                          field.value === cat.id
+                            ? "border-indigo-500 bg-indigo-500/10 scale-105 shadow-md shadow-indigo-500/10"
+                            : "border-transparent bg-muted/40 hover:bg-muted/60"
+                        )}
+                      >
+                        <span className="text-2xl">{iconMap[cat.name] || "📦"}</span>
+                        <span className="text-[10px] font-semibold tracking-wide text-center">{cat.name}</span>
+                      </button>
+                    ))
+                  )}
                 </div>
               </FormControl>
               <FormMessage />
