@@ -25,14 +25,14 @@ class AccountUpdate(BaseModel):
     is_active : bool | None = None
 
 class AccountResponse(BaseModel):
-    """Schema returned byt the API"""
+    """Schema returned by the API"""
 
     model_config = ConfigDict(from_attributes = True)
 
     id: UUID
     name: str
     account_type: AccountType
-    Institution: str | None
+    institution: str | None
     currency: str
     credit_limit: Decimal | None
     is_active: bool

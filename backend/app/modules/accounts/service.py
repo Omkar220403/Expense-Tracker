@@ -18,7 +18,7 @@ class AccountService:
     def create_account(self, data: AccountCreate) -> Account:
         """Create a new account"""
 
-        self.validate_account_data(
+        self._validate_account_data(
             account_type = data.account_type, 
             credit_limit=data.credit_limit,
         )
@@ -65,20 +65,33 @@ class AccountService:
         if data.name is not None:
             account.name = data.name
 
-        if data.institution is not None:
+        if "name" in data.model_fields_set:
+            account.name = data.name
+
+        if "institution" in data.model_fields_set:
             account.institution = data.institution
 
-        if data.currency is not None:
+        if "currency" in data.model_fields_set:
+            if data.currency is None:
+                raise ValueError("Currency cannot be None.")
+            
             account.currency = data.currency.upper()
 
-        if data.credit_limit is not None:
-            self._validate_credit_limit(
-                account.account_type,
-                data.credit_limit,
-            )
+        if "credit_limit" in data.model_fields_set:
+            if data.credit_limit is None:
+                if account.account_type == AccountType.CREDIT_CARD:
+                    raise ValueError(
+                        "Credit card accounts must have a credit limit."
+                    )
+            else:
+                self._validate_credit_limit(
+                    account.account_type,
+                    data.credit_limit,
+                )
+
             account.credit_limit = data.credit_limit
 
-        if data.is_active is not None:
+        if "is_active" in data.model_fields_set:
             account.is_active = data.is_active
 
         try:
@@ -116,6 +129,11 @@ class AccountService:
             if credit_limit is None:
                 raise ValueError(
                     "Credit card accounts must have a credit limit."
+                )
+
+            if credit_limit <= 0:
+                raise ValueError(
+                    "Credit limit must be greater than zero."
                 )
 
         elif credit_limit is not None:
