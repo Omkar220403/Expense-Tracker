@@ -47,8 +47,15 @@ class AccountRepository:
 
         return account
 
-    def delete(self, account: Account) -> None:
+    def delete(self, account_id: UUID) -> None:
         """Delete an account."""
+
+        account = self.get_by_id(account_id)
+
+        if account is None:
+            return False
 
         self.session.delete(account)
         self.session.flush()
+
+        return True

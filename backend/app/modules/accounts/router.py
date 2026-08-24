@@ -83,3 +83,22 @@ def update_account(
         )
 
     return account
+
+@router.delete(
+    "/{account_id}",
+    status_code = status.HTTP_204_NO_CONTENT,
+)
+def delete_account(
+    account_id: UUID,
+    session: Session = Depends(get_db_session),
+) -> None:
+    """Delete an account by ID."""
+
+    service = AccountService(session)
+    deleted = service.delete_account(account_id)
+
+    if not deleted:
+        raise HTTPException(
+            status_code = status.HTTP_404_NOT_FOUND,
+            detail = f"Account with ID {account_id} not found.",
+        )

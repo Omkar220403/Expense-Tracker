@@ -102,18 +102,7 @@ class AccountService:
     def delete_account(self, account_id: UUID) -> bool:
         """Delete an account."""
 
-        account = self.repository.get_by_id(account_id)
-
-        if account is None:
-            return False
-
-        try:
-            self.repository.delete(account)
-            self.session.commit()
-            return True
-        except Exception:
-            self.session.rollback()
-            raise
+        return self.repository.delete(account_id)
 
     @staticmethod
     def _validate_account_data(
