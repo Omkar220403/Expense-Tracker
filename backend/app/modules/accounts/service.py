@@ -62,9 +62,6 @@ class AccountService:
         if account is None:
             return None
 
-        if data.name is not None:
-            account.name = data.name
-
         if "name" in data.model_fields_set:
             account.name = data.name
 
