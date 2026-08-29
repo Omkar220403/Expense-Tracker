@@ -4,10 +4,14 @@ from uuid import UUID, uuid4
 
 from sqlalchemy import Boolean, DateTime, Numeric, String, func
 from sqlalchemy import Enum as SQLAlchemyEnum
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
 from app.core.enums import AccountType
+
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from app.modules.transactions.models import Transaction
 
 class Account(Base):
     """Represent financial account owned by the user"""
@@ -62,4 +66,8 @@ class Account(Base):
         nullable=False,
         server_default=func.now(),
         onupdate=func.now(),
+    )
+
+    transactions: Mapped[list["Transaction"]] = relationship(
+        back_populates = "account",
     )
