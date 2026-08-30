@@ -6,3 +6,9 @@ class AccountType(StrEnum):
     BANK_ACCOUNT = "bank_account"
     CREDIT_CARD = "credit_card"
     CASH = "cash"
+
+class TransactionType(StrEnum):
+    """Supported Transaction Types"""
+
+    INCOME = "income"
+    EXPENSE = "expense"

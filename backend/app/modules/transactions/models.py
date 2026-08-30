@@ -12,11 +12,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from app.modules.accounts.models import Account
 
-
-class TransactionType(str, Enum):
-    INCOME = "income"
-    EXPENSE = "expense"
-
+from app.core.enums import TransactionType
 
 class Transaction(Base):
     """Represent a financial transaction."""
