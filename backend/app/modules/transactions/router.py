@@ -48,3 +48,23 @@ def get_transactions(
 
     return service.get_transactions()
 
+@router.get(
+    "/{transaction_id}",
+    response_model = TransactionResponse
+)
+def get_transasction(
+    transaction_id: UUID,
+    session: Session = Depends(get_db_session),
+) -> TransactionResponse:
+    """Get a transaction by ID"""
+
+    service = TransactionService(session)
+    transaction = service.get_transaction(transaction_id)
+
+    if transaction is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Transaction with ID {transaction_id} not found",
+        )
+
+    return transaction
