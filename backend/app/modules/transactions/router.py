@@ -68,3 +68,44 @@ def get_transasction(
         )
 
     return transaction
+
+@router.patch(
+    "/{transcation_id}",
+    response_model = TransactionResponse,
+)
+def update_transaction(
+    transaction_id: UUID,
+    data: TransactionUpdate,
+    session: Session = Depends(get_db_session),
+)  -> TransactionResponse:
+    """Update a transaction by ID"""
+
+    service = TransactionService(session)
+    transaction = service.update_transaction(transaction_id, data)
+
+    if transaction is None:
+        raise HTTPException(
+            status_code = status.HTTP_404_NOT_FOUND,
+            detail = f"Transaction with ID {transaction_id} not found",
+        )
+
+    return transaction
+
+@router.delete(
+    "/{transaction_id}",
+    status_code = status.HTTP_204_NO_CONTENT,
+)
+def delete_transaction(
+    transaction_id: UUID,
+    session: Session = Depends(get_db_session)
+) -> None:
+    """Delete a transaction by ID"""
+
+    service = TransactionService(session)
+    deleted = service.delete_transaction(transaction_id)
+
+    if not deleted:
+        raise HTTPException(
+            status_code = status.HTTP_404_NOT_FOUND,
+            detail = f"Transaction with ID {transaction_id} not found",
+        )
