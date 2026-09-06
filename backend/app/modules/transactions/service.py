@@ -41,7 +41,7 @@ class TransactionService:
         """Get a transaction by ID."""
         statement = select(Transaction).where(Transaction.id == transaction_id)
 
-        return self.session.scalars(statement)
+        return self.session.scalar(statement)
 
     def update_transaction(self, transaction_id: UUID, data: TransactionUpdate) -> Transaction | None:
         """Update a transaction by ID."""
