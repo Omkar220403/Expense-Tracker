@@ -1,6 +1,6 @@
 from datetime import datetime
 from decimal import Decimal
-from enum import Enum
+
 from uuid import UUID, uuid4
 
 from sqlalchemy import DateTime, Enum as SQLAlchemyEnum
@@ -8,11 +8,13 @@ from sqlalchemy import ForeignKey, Numeric, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
+from app.core.enums import TransactionType
 from typing import TYPE_CHECKING
+
 if TYPE_CHECKING:
     from app.modules.accounts.models import Account
 
-from app.core.enums import TransactionType
+
 
 class Transaction(Base):
     """Represent a financial transaction."""

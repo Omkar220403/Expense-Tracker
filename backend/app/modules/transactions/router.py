@@ -52,7 +52,7 @@ def get_transactions(
     "/{transaction_id}",
     response_model = TransactionResponse
 )
-def get_transasction(
+def get_transaction(
     transaction_id: UUID,
     session: Session = Depends(get_db_session),
 ) -> TransactionResponse:
