@@ -1,15 +1,14 @@
 from datetime import datetime
 from decimal import Decimal
-
+from typing import TYPE_CHECKING
 from uuid import UUID, uuid4
 
-from sqlalchemy import DateTime, Enum as SQLAlchemyEnum
-from sqlalchemy import ForeignKey, Numeric, String, Text, func
+from sqlalchemy import DateTime, ForeignKey, Numeric, String, Text, func
+from sqlalchemy import Enum as SQLAlchemyEnum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
 from app.core.enums import TransactionType
-from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from app.modules.accounts.models import Account

@@ -1,12 +1,18 @@
+from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db_session
-from app.modules.transactions.schemas import (TransactionCreate, TransactionResponse, TransactionUpdate)
-
+from app.modules.transactions.schemas import (
+    TransactionCreate,
+    TransactionResponse,
+    TransactionUpdate,
+)
 from app.modules.transactions.service import TransactionService
+
+DbSession = Annotated[Session, Depends(get_db_session)]
 
 router = APIRouter(
     prefix = "/transactions",
@@ -20,18 +26,12 @@ router = APIRouter(
 )
 def create_transaction(
     data: TransactionCreate,
-    session: Session = Depends(get_db_session),
+    session: DbSession,
 ) -> TransactionResponse:
     """Create a new transaction"""
 
     service = TransactionService(session)
     transaction = service.create_transaction(data)
-
-    if transaction is None:
-        raise HTTPException(
-            status_code = status.HTTP_404_NOT_FOUND,
-            detail=f"Account with ID {data.account_id} not found.",
-        )
 
     return transaction
 
@@ -40,7 +40,7 @@ def create_transaction(
     response_model = list[TransactionResponse],
 )
 def get_transactions(
-    session: Session = Depends(get_db_session),
+    session: DbSession,
 ) -> list[TransactionResponse]:
     """Get all transactions"""
 
@@ -54,7 +54,7 @@ def get_transactions(
 )
 def get_transaction(
     transaction_id: UUID,
-    session: Session = Depends(get_db_session),
+    session: DbSession,
 ) -> TransactionResponse:
     """Get a transaction by ID"""
 
@@ -70,13 +70,13 @@ def get_transaction(
     return transaction
 
 @router.patch(
-    "/{transcation_id}",
+    "/{transaction_id}",
     response_model = TransactionResponse,
 )
 def update_transaction(
     transaction_id: UUID,
     data: TransactionUpdate,
-    session: Session = Depends(get_db_session),
+    session: DbSession,
 )  -> TransactionResponse:
     """Update a transaction by ID"""
 
@@ -97,7 +97,7 @@ def update_transaction(
 )
 def delete_transaction(
     transaction_id: UUID,
-    session: Session = Depends(get_db_session)
+    session: DbSession,
 ) -> None:
     """Delete a transaction by ID"""
 
