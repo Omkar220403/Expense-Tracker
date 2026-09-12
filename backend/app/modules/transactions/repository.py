@@ -24,9 +24,7 @@ class TransactionRepository:
     def get_by_id(self, transaction_id: UUID) -> Transaction | None:
         """Get a transaction by its ID."""
 
-        result = self.session.execute(
-            select(Transaction).where(Transaction.id == transaction_id)
-        )
+        result = self.session.execute(select(Transaction).where(Transaction.id == transaction_id))
 
         return result.scalar_one_or_none()
 

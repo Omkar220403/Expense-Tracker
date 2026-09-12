@@ -5,8 +5,8 @@ from sqlalchemy import engine_from_config, pool
 
 from app.core.config import get_settings
 from app.core.database import Base
-from app.modules.accounts.models import Account
-from app.modules.transactions.models import Transaction
+from app.modules.accounts.models import Account  # noqa: F401
+from app.modules.transactions.models import Transaction  # noqa: F401
 
 config = context.config
 

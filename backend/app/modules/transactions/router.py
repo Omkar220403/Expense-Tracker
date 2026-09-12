@@ -15,14 +15,15 @@ from app.modules.transactions.service import TransactionService
 DbSession = Annotated[Session, Depends(get_db_session)]
 
 router = APIRouter(
-    prefix = "/transactions",
-    tags = ["Transactions"],
+    prefix="/transactions",
+    tags=["Transactions"],
 )
+
 
 @router.post(
     "",
-    response_model = TransactionResponse,
-    status_code = status.HTTP_201_CREATED,
+    response_model=TransactionResponse,
+    status_code=status.HTTP_201_CREATED,
 )
 def create_transaction(
     data: TransactionCreate,
@@ -35,9 +36,10 @@ def create_transaction(
 
     return transaction
 
+
 @router.get(
     "",
-    response_model = list[TransactionResponse],
+    response_model=list[TransactionResponse],
 )
 def get_transactions(
     session: DbSession,
@@ -48,10 +50,8 @@ def get_transactions(
 
     return service.get_transactions()
 
-@router.get(
-    "/{transaction_id}",
-    response_model = TransactionResponse
-)
+
+@router.get("/{transaction_id}", response_model=TransactionResponse)
 def get_transaction(
     transaction_id: UUID,
     session: DbSession,
@@ -69,15 +69,16 @@ def get_transaction(
 
     return transaction
 
+
 @router.patch(
     "/{transaction_id}",
-    response_model = TransactionResponse,
+    response_model=TransactionResponse,
 )
 def update_transaction(
     transaction_id: UUID,
     data: TransactionUpdate,
     session: DbSession,
-)  -> TransactionResponse:
+) -> TransactionResponse:
     """Update a transaction by ID"""
 
     service = TransactionService(session)
@@ -85,15 +86,16 @@ def update_transaction(
 
     if transaction is None:
         raise HTTPException(
-            status_code = status.HTTP_404_NOT_FOUND,
-            detail = f"Transaction with ID {transaction_id} not found",
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Transaction with ID {transaction_id} not found",
         )
 
     return transaction
 
+
 @router.delete(
     "/{transaction_id}",
-    status_code = status.HTTP_204_NO_CONTENT,
+    status_code=status.HTTP_204_NO_CONTENT,
 )
 def delete_transaction(
     transaction_id: UUID,
@@ -106,6 +108,6 @@ def delete_transaction(
 
     if not deleted:
         raise HTTPException(
-            status_code = status.HTTP_404_NOT_FOUND,
-            detail = f"Transaction with ID {transaction_id} not found",
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Transaction with ID {transaction_id} not found",
         )

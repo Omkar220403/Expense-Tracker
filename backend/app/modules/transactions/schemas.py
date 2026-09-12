@@ -13,23 +13,27 @@ class TransactionCreate(BaseModel):
     account_id: UUID
     transaction_type: TransactionType
     amount: Decimal = Field(gt=0)
-    description: str | None = None
-    merchant: str | None = None
+    description: str | None = Field(default=None, max_length=255)
+    merchant: str | None = Field(default=None, max_length=255)
     transaction_date: datetime
     notes: str | None = None
 
+
 class TransactionUpdate(BaseModel):
     """Schema for updating a transaction."""
+
     account_id: UUID | None = None
     transaction_type: TransactionType | None = None
     amount: Decimal | None = Field(default=None, gt=0)
-    description: str | None = None
-    merchant: str | None = None
+    description: str | None = Field(default=None, max_length=255)
+    merchant: str | None = Field(default=None, max_length=255)
     transaction_date: datetime | None = None
     notes: str | None = None
 
+
 class TransactionResponse(BaseModel):
     """Schema returned for a transaction."""
+
     id: UUID
     account_id: UUID
     transaction_type: TransactionType

@@ -1,6 +1,6 @@
 # Smart Expense Tracker
 
-A personal, local-first expense tracker. This repository currently establishes the application foundation only: a Next.js frontend, a FastAPI backend, PostgreSQL configuration, Alembic migrations, and a browser-to-API health check.
+A personal, local-first expense tracker with account and transaction REST APIs, a Next.js frontend, PostgreSQL persistence, and Alembic migrations.
 
 ## Stack
 
@@ -13,7 +13,7 @@ A personal, local-first expense tracker. This repository currently establishes t
 
 The frontend and backend are separate applications. Backend dependencies flow in one direction: `Router → Service → Repository → PostgreSQL`.
 
-Only the health module exists today; future domain modules will use this three-layer structure. See [architecture notes](docs/architecture.md) and [database notes](docs/database.md).
+The health, account, and transaction modules use this three-layer structure. See [architecture notes](docs/architecture.md) and [database notes](docs/database.md).
 
 ## Prerequisites
 
@@ -31,7 +31,7 @@ Copy-Item .env.example .env
 Copy-Item frontend/.env.example frontend/.env.local
 ```
 
-Create the database named in `DATABASE_URL` before running migrations. The supplied development URL expects an `expense_tracker` database, user, and password; replace it if your PostgreSQL setup differs.
+Create the database named in `DATABASE_URL` before running migrations. The example uses local development credentials (`expense_tracker` / `expense_tracker`); replace them for your PostgreSQL setup.
 
 ## Run the backend
 
@@ -69,7 +69,7 @@ npm run build
 
 ## Migrations
 
-Schema changes are migration-only; the application does not create tables at startup. When the first SQLAlchemy models are added, generate a reviewed migration from `backend/`:
+Schema changes are migration-only; the application does not create tables at startup. Generate and review future migrations from `backend/`:
 
 ```powershell
 uv run alembic revision --autogenerate -m "create initial domain tables"
@@ -78,4 +78,4 @@ uv run alembic upgrade head
 
 ## Next milestone
 
-Build the Account domain end to end: SQLAlchemy model and migration, repository, service, schemas, REST routes, and focused tests. That establishes the reusable pattern for categories and transactions.
+Build categories, reporting, imports, and the frontend workflows on top of the existing account and transaction APIs.

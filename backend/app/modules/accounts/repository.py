@@ -1,9 +1,10 @@
 from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.modules.accounts.models import Account
+from app.modules.transactions.models import Transaction
 
 
 class AccountRepository:
@@ -24,18 +25,14 @@ class AccountRepository:
     def get_by_id(self, account_id: UUID) -> Account | None:
         """Get an account by its ID."""
 
-        result = self.session.execute(
-            select(Account).where(Account.id == account_id)
-        )
+        result = self.session.execute(select(Account).where(Account.id == account_id))
 
         return result.scalar_one_or_none()
 
     def get_all(self) -> list[Account]:
         """Get all accounts."""
 
-        result = self.session.execute(
-            select(Account).order_by(Account.created_at.desc())
-        )
+        result = self.session.execute(select(Account).order_by(Account.created_at.desc()))
 
         return list(result.scalars().all())
 
@@ -47,7 +44,18 @@ class AccountRepository:
 
         return account
 
-    def delete(self, account_id: UUID) -> None:
+    def has_transactions(self, account_id: UUID) -> bool:
+        """Return whether an account has any recorded transactions."""
+
+        return bool(
+            self.session.scalar(
+                select(func.count())
+                .select_from(Transaction)
+                .where(Transaction.account_id == account_id)
+            )
+        )
+
+    def delete(self, account_id: UUID) -> bool:
         """Delete an account."""
 
         account = self.get_by_id(account_id)

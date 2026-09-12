@@ -60,7 +60,7 @@ class TransactionService:
         if transaction is None:
             return None
 
-        update_data = data.model_dump(exclude_unset = True)
+        update_data = data.model_dump(exclude_unset=True)
 
         if "account_id" in update_data:
             account_id = update_data["account_id"]

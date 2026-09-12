@@ -3,7 +3,7 @@ from decimal import Decimal
 from typing import TYPE_CHECKING
 from uuid import UUID, uuid4
 
-from sqlalchemy import DateTime, ForeignKey, Numeric, String, Text, func
+from sqlalchemy import CheckConstraint, DateTime, ForeignKey, Numeric, String, Text, func
 from sqlalchemy import Enum as SQLAlchemyEnum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -14,11 +14,11 @@ if TYPE_CHECKING:
     from app.modules.accounts.models import Account
 
 
-
 class Transaction(Base):
     """Represent a financial transaction."""
 
     __tablename__ = "transactions"
+    __table_args__ = (CheckConstraint("amount > 0", name="ck_transactions_amount_positive"),)
 
     id: Mapped[UUID] = mapped_column(
         primary_key=True,
@@ -26,7 +26,7 @@ class Transaction(Base):
     )
 
     account_id: Mapped[UUID] = mapped_column(
-        ForeignKey("accounts.id"),
+        ForeignKey("accounts.id", ondelete="RESTRICT"),
         nullable=False,
         index=True,
     )

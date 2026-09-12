@@ -1,37 +1,45 @@
 from datetime import datetime
 from decimal import Decimal
+from typing import TYPE_CHECKING
 from uuid import UUID, uuid4
 
-from sqlalchemy import Boolean, DateTime, Numeric, String, func
+from sqlalchemy import Boolean, CheckConstraint, DateTime, Numeric, String, func
 from sqlalchemy import Enum as SQLAlchemyEnum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
 from app.core.enums import AccountType
 
-from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from app.modules.transactions.models import Transaction
+
 
 class Account(Base):
     """Represent financial account owned by the user"""
 
     __tablename__ = "accounts"
+    __table_args__ = (
+        CheckConstraint(
+            "(account_type = 'CREDIT_CARD' AND credit_limit > 0) "
+            "OR (account_type <> 'CREDIT_CARD' AND credit_limit IS NULL)",
+            name="ck_accounts_credit_limit_matches_type",
+        ),
+    )
 
     id: Mapped[UUID] = mapped_column(
-        primary_key = True,
-        default = uuid4,
+        primary_key=True,
+        default=uuid4,
     )
 
     name: Mapped[str] = mapped_column(
         String(100),
-        nullable = False,
+        nullable=False,
     )
 
     account_type: Mapped[AccountType] = mapped_column(
-        SQLAlchemyEnum(AccountType, name = "account_type"),
-        nullable = False,
-    )   
+        SQLAlchemyEnum(AccountType, name="account_type"),
+        nullable=False,
+    )
 
     institution: Mapped[str | None] = mapped_column(
         String(100),
@@ -69,5 +77,6 @@ class Account(Base):
     )
 
     transactions: Mapped[list["Transaction"]] = relationship(
-        back_populates = "account",
+        back_populates="account",
+        passive_deletes=True,
     )

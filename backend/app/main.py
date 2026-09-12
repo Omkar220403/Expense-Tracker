@@ -4,11 +4,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import get_settings
-from app.modules.health.router import router as health_router
-from app.shared.error_handlers import register_exception_handlers
-
 from app.modules.accounts.router import router as accounts_router
+from app.modules.health.router import router as health_router
 from app.modules.transactions.router import router as transactions_router
+from app.shared.error_handlers import register_exception_handlers
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
 

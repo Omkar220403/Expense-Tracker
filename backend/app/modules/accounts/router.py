@@ -1,25 +1,29 @@
+from typing import Annotated
+from uuid import UUID
+
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db_session
 from app.modules.accounts.schemas import AccountCreate, AccountResponse, AccountUpdate
 from app.modules.accounts.service import AccountService
 
-from uuid import UUID
-from fastapi import APIRouter, Depends, HTTPException, status
-
 router = APIRouter(
     prefix="/accounts",
     tags=["Accounts"],
 )
 
+DbSession = Annotated[Session, Depends(get_db_session)]
+
+
 @router.post(
     "",
-    response_model = AccountResponse,
-    status_code = status.HTTP_201_CREATED,
+    response_model=AccountResponse,
+    status_code=status.HTTP_201_CREATED,
 )
 def create_account(
     data: AccountCreate,
-    session: Session = Depends(get_db_session),
+    session: DbSession,
 ) -> AccountResponse:
     """Create a new account."""
 
@@ -28,12 +32,13 @@ def create_account(
 
     return account
 
+
 @router.get(
     "",
-    response_model = list[AccountResponse],
+    response_model=list[AccountResponse],
 )
 def get_accounts(
-    session: Session = Depends(get_db_session),
+    session: DbSession,
 ) -> list[AccountResponse]:
     """Get all accounts."""
 
@@ -41,13 +46,14 @@ def get_accounts(
 
     return service.get_accounts()
 
+
 @router.get(
     "/{account_id}",
-    response_model = AccountResponse,
+    response_model=AccountResponse,
 )
 def get_account(
-    account_id : UUID,
-    session: Session = Depends(get_db_session),
+    account_id: UUID,
+    session: DbSession,
 ) -> AccountResponse:
     """Get an accountby ID."""
 
@@ -56,20 +62,21 @@ def get_account(
 
     if account is None:
         raise HTTPException(
-            status_code = status.HTTP_404_NOT_FOUND,
-            detail = f"Account with ID {account_id} not found.",
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Account with ID {account_id} not found.",
         )
 
     return account
 
+
 @router.patch(
     "/{account_id}",
-    response_model = AccountResponse,
+    response_model=AccountResponse,
 )
 def update_account(
     account_id: UUID,
     data: AccountUpdate,
-    session: Session = Depends(get_db_session),
+    session: DbSession,
 ) -> AccountResponse:
     """Update an Account by ID."""
 
@@ -78,19 +85,20 @@ def update_account(
 
     if account is None:
         raise HTTPException(
-            status_code = status.HTTP_404_NOT_FOUND,
-            detail = f"Account with ID {account_id} not found.",
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Account with ID {account_id} not found.",
         )
 
     return account
 
+
 @router.delete(
     "/{account_id}",
-    status_code = status.HTTP_204_NO_CONTENT,
+    status_code=status.HTTP_204_NO_CONTENT,
 )
 def delete_account(
     account_id: UUID,
-    session: Session = Depends(get_db_session),
+    session: DbSession,
 ) -> None:
     """Delete an account by ID."""
 
@@ -99,6 +107,6 @@ def delete_account(
 
     if not deleted:
         raise HTTPException(
-            status_code = status.HTTP_404_NOT_FOUND,
-            detail = f"Account with ID {account_id} not found.",
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Account with ID {account_id} not found.",
         )
