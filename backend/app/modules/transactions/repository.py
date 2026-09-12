@@ -45,13 +45,8 @@ class TransactionRepository:
 
         return transaction
 
-    def delete(self, transaction_id: UUID) -> bool:
-        """Delete a transaction by its ID."""
-
-        transaction = self.get_by_id(transaction_id)
-
-        if transaction is None:
-            return False
+    def delete(self, transaction: Transaction) -> None:
+        """Delete a transaction."""
 
         self.session.delete(transaction)
         self.session.flush()

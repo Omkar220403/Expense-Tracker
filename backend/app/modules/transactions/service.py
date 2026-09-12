@@ -85,14 +85,15 @@ class TransactionService:
     def delete_transaction(self, transaction_id: UUID) -> bool:
         """Delete a transaction by ID."""
 
+        transaction = self.repository.get_by_id(transaction_id)
+
+        if transaction is None:
+            return False
+
         try:
-            deleted = self.repository.delete(transaction_id)
-
-            if not deleted:
-                return False
-
+            self.repository.delete(transaction)
             self.session.commit()
             return True
         except Exception:
             self.session.rollback()
-            raise
+            raise       
